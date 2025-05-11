@@ -89,7 +89,7 @@ int main (){
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(6*sizeof(float)));
     glEnableVertexAttribArray(2);
 
-    Shader sh1("/home/saiteja/Qualcomm/preparation/opengl/textures/shaders/shader.vs", "/home/saiteja/Qualcomm/preparation/opengl/textures/shaders/shader.frag");
+    Shader sh1("/home/saiteja/Qualcomm/preparation/opengl/3-textures/shaders/shader.vs", "/home/saiteja/Qualcomm/preparation/opengl/3-textures/shaders/shader.frag");
     
     /* Need this otherwise, the images will be rendered vertically reversed. This is because opengl expects y 0 to be at bottom but images have it at top.*/
     stbi_set_flip_vertically_on_load(true);
@@ -101,7 +101,7 @@ int main (){
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    unsigned char* texData = stbi_load("/home/saiteja/Qualcomm/preparation/opengl/textures/image/container.jpg", &width, &height, &nRChannels, 0);
+    unsigned char* texData = stbi_load("/home/saiteja/Qualcomm/preparation/opengl/3-textures/image/container.jpg", &width, &height, &nRChannels, 0);
     
     if(texData){
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, texData);
@@ -114,7 +114,7 @@ int main (){
 
     glGenTextures(1, &texture1);
     glBindTexture(GL_TEXTURE_2D, texture1);
-    unsigned char* smileData = stbi_load("/home/saiteja/Qualcomm/preparation/opengl/textures/image/awesomeface.png", &width, &height, &nRChannels, 0);
+    unsigned char* smileData = stbi_load("/home/saiteja/Qualcomm/preparation/opengl/3-textures/image/awesomeface.png", &width, &height, &nRChannels, 0);
 
     if(smileData){
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, smileData);

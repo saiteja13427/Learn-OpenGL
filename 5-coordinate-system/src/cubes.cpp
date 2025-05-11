@@ -9,18 +9,64 @@
 #include "../libs/shader.h"
 #include "../libs/stb_image.h"
 
+
+
 float vertices[] = {
-    -0.5f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,    // Top Left
-    0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,  // Bottom right
-    -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, //Bottom left
-    0.5f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f    // Top Right
+    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+     0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+    -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+    -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+     0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+     0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+    -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 };
 
-int indices[] = {
-    0,1,3,
-    1,2,0
+glm::vec3 cubePositions[] = {
+    glm::vec3( 0.0f, 0.0f, 0.0f),
+    glm::vec3( 2.0f, 5.0f, -15.0f),
+    glm::vec3(-1.5f, -2.2f, -2.5f),
+    glm::vec3(-3.8f, -2.0f, -12.3f),
+    glm::vec3( 2.4f, -0.4f, -3.5f),
+    glm::vec3(-1.7f, 3.0f, -7.5f),
+    glm::vec3( 1.3f, -2.0f, -2.5f),
+    glm::vec3( 1.5f, 2.0f, -2.5f),
+    glm::vec3( 1.5f, 0.2f, -1.5f),
+    glm::vec3(-1.3f, 1.0f, -1.5f)
 };
-
 
 void framebuffer_size_callback (GLFWwindow* window, int width, int height){
     glViewport(0,0,width, height);
@@ -46,7 +92,7 @@ int main (){
      * VAO -> Vertex array object
      * EBO -> Element buffer object
      */
-    unsigned int VBO, VAO, texture, texture1, EBO;
+    unsigned int VBO, VAO, texture, texture1;
 
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -74,7 +120,6 @@ int main (){
     std::cout << "Attribss: " << nAttribs << std::endl;
 
 
-    glGenBuffers(1, &EBO);
     glGenVertexArrays(1, &VAO);
     
     /* Generate a buffer, bind it to GL_ARRAY_BUFFER type required by a VBO and copy the vertices into this buffer */
@@ -85,20 +130,14 @@ int main (){
     /* GL_(STATIC/DYNAMIC/STREAM))_DRAW call tells how many times will the data be set and how many times will it be used */
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
     /* Tell OpenGL a few things about the vertex data */
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *)0);
     glEnableVertexAttribArray(0);
 
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(3*sizeof(float)));
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *)(3*sizeof(float)));
     glEnableVertexAttribArray(1);
 
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(6*sizeof(float)));
-    glEnableVertexAttribArray(2);
-
-    Shader sh1("/home/saiteja/Qualcomm/preparation/opengl/5-coordinate-system/shaders/shader.vs", "/home/saiteja/Qualcomm/preparation/opengl/5-coordinate-system/shaders/shader.frag");
+    Shader sh1("/home/saiteja/Qualcomm/preparation/opengl/5-coordinate-system/shaders/shader-cubes.vs", "/home/saiteja/Qualcomm/preparation/opengl/5-coordinate-system/shaders/shader-cubes.frag");
     
     /* Need this otherwise, the images will be rendered vertically reversed. This is because opengl expects y 0 to be at bottom but images have it at top.*/
     stbi_set_flip_vertically_on_load(true);
@@ -130,6 +169,10 @@ int main (){
         glGenerateMipmap(GL_TEXTURE_2D);
     }
 
+    /* 
+    * Enable depth testing so that the cube is properly rendered and a few triangles are not drawn on each othere
+    */
+   glEnable(GL_DEPTH_TEST);
 
     /*
      * Render Loop: Each iteration is called a frame
@@ -140,38 +183,39 @@ int main (){
 
         /* Render */
         glClearColor(0.8f, 0.8f, 0.7f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         sh1.use();
         sh1.setInt("inTexture2", 1);
         unsigned int modelLoc = glGetUniformLocation(sh1.ID, "model");
         unsigned int viewLoc = glGetUniformLocation(sh1.ID, "view");
         unsigned int projectionLoc = glGetUniformLocation(sh1.ID, "projection");
-        /* 
-        * Create a transformation matrix
-        */
-        glm::mat4 model = glm::mat4(1.0f);
-        model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 
-        glm::mat4 view = glm::mat4(1.0f);
-        view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
-        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+        for(int i = 0; i < 10; i++){
+            /* 
+            * Create a transformation matrix
+            */
+            glm::mat4 model = glm::mat4(1.0f);
+            model = glm::translate(model, glm::vec3(cubePositions[i].x, cubePositions[i].y, cubePositions[i].z));
+            model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(1.0f, 0.3f, 0.5f));
+            glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 
-        glm::mat4 projection = glm::mat4(1.0f);
-        projection = glm::perspective(glm::radians(45.0f), 800.0f/600.0f, 0.1f, 100.0f);
-        glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
+            glm::mat4 view = glm::mat4(1.0f);
+            view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+            glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+
+            glm::mat4 projection = glm::mat4(1.0f);
+            projection = glm::perspective(glm::radians(45.0f), 800.0f/600.0f, 0.1f, 100.0f);
+            glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
 
-        glBindVertexArray(VAO);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, texture);
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, texture1);
+            glBindVertexArray(VAO);
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, texture);
+            glActiveTexture(GL_TEXTURE1);
+            glBindTexture(GL_TEXTURE_2D, texture1);
 
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
-        
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+        }
         glBindVertexArray(0);
 
         /* Poll events and swap buffers */

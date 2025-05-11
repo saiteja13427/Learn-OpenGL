@@ -83,7 +83,7 @@ int main (){
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)(3*sizeof(float)));
     glEnableVertexAttribArray(1);
 
-    Shader sh1("/home/saiteja/Qualcomm/preparation/opengl/textures/shaders/shader.vs", "/home/saiteja/Qualcomm/preparation/opengl/textures/shaders/shader.frag");
+    Shader sh1("/home/saiteja/Qualcomm/preparation/opengl/3-textures/shaders/shader.vs", "/home/saiteja/Qualcomm/preparation/opengl/3-textures/shaders/shader.frag");
     
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
@@ -92,7 +92,7 @@ int main (){
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    unsigned char* texData = stbi_load("/home/saiteja/Qualcomm/preparation/opengl/textures/image/container.jpg", &width, &height, &nRChannels, 0);
+    unsigned char* texData = stbi_load("/home/saiteja/Qualcomm/preparation/opengl/3-textures/image/container.jpg", &width, &height, &nRChannels, 0);
     
     if(texData){
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, texData);
