@@ -53,7 +53,7 @@ float vertices[] = {
     -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
 };
 
-glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 6.0f);
+glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
 glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
@@ -203,7 +203,7 @@ int main (){
     while (!glfwWindowShouldClose(window)){
         /* Inputs */
         processInput(window);
-        glm::vec3 lightPos(cos(glfwGetTime()), cos(glfwGetTime()), sin(glfwGetTime()));
+        glm::vec3 lightPos(1.2f, 0.0f, 0.0f);
 
         /* Render */
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -211,8 +211,11 @@ int main (){
         objectShader.use();
 
         glm::vec3 lightColor;
-        objectShader.setVec3("lightColor", 1.0f, 0.5f, 0.31f);
-        objectShader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
+        lightColor.x = static_cast<float>(sin(glfwGetTime() * 2.0));
+        lightColor.y = static_cast<float>(sin(glfwGetTime() * 0.7));
+        lightColor.z = static_cast<float>(sin(glfwGetTime() * 1.3));
+        glm::vec3 diffuseColor = lightColor   * glm::vec3(0.5f); // decrease the influence
+        glm::vec3 ambientColor = diffuseColor * glm::vec3(0.2f); // low influence
 
         /* 
         * Create a transformation matrix
@@ -230,13 +233,13 @@ int main (){
         objectShader.setMat4("view", view);
         objectShader.setMat4("projection", projection);
         objectShader.setVec3("viewPos", cameraPos.x, cameraPos.y, cameraPos.z);
-        objectShader.setVec3("material.ambient", glm::vec3(1.0));
-        objectShader.setVec3("material.diffuse", glm::vec3(1.0));
-        objectShader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
+        objectShader.setVec3("material.ambient", 1.0f, 0.5f, 0.31f);
+        objectShader.setVec3("material.diffuse", 1.0f, 0.5f, 0.31f);
+        objectShader.setVec3("material.specular", 0.5f, 0.5f, 0.5f); // specular lighting doesn't have full effect on this object's material
         objectShader.setFloat("material.shininess", 32.0f);
         objectShader.setVec3("light.position", lightPos.x, lightPos.y, lightPos.z);
-        objectShader.setVec3("light.ambient", glm::vec3(0.2));
-        objectShader.setVec3("light.diffuse", glm::vec3(1.0));
+        objectShader.setVec3("light.ambient", ambientColor);
+        objectShader.setVec3("light.diffuse", diffuseColor);
         objectShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
 
         glBindVertexArray(VAO);
@@ -247,7 +250,8 @@ int main (){
         glBindVertexArray(lightVAO);
         model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(lightPos));
-        model = glm::scale(model, glm::vec3(0.1f));
+        model = glm::scale(model, glm::vec3(0.2f));
+        model = glm::rotate(model, glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
         lightSourceShader.setMat4("model", model);
         lightSourceShader.setMat4("view", view);
         lightSourceShader.setMat4("projection", projection);
