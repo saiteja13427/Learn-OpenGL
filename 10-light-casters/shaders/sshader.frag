@@ -33,7 +33,6 @@ void main()
     float epsilon = light.cutoff - light.outerCutoff;
     float intensity = clamp((theta - light.outerCutoff) / epsilon, 0.0, 1.0);
 
-
     // ambient
     vec3 ambient = light.ambient * vec3(texture(material.diffuse, texCords));
   	
