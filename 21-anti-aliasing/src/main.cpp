@@ -60,7 +60,7 @@ int main()
     }
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-    glfwSetCursorPosCallback(window, mouse_callback);
+    // glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetScrollCallback(window, scroll_callback);
 
     // tell GLFW to capture our mouse
@@ -74,22 +74,13 @@ int main()
         return -1;
     }
 
-    // configure global opengl state
-    // -----------------------------
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LESS); // always pass the depth test (same effect as glDisable(GL_DEPTH_TEST))
-
-    glEnable(GL_STENCIL_TEST);
-    glEnable(GL_MULTISAMPLE);
-
     // build and compile shaders
     // -------------------------
-    Shader shader("/home/saiteja/Qualcomm/preparation/opengl/17-cubemaps/shaders/shader.vs", "/home/saiteja/Qualcomm/preparation/opengl/17-cubemaps/shaders/shader.frag");
-    Shader cubeMapShader("/home/saiteja/Qualcomm/preparation/opengl/17-cubemaps/shaders/cubemap.vs", "/home/saiteja/Qualcomm/preparation/opengl/17-cubemaps/shaders/cubemap.frag");
+    Shader shader("/home/saiteja/Qualcomm/preparation/opengl/21-anti-aliasing/shaders/shader.vs", "/home/saiteja/Qualcomm/preparation/opengl/21-anti-aliasing/shaders/shader.frag");
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
-    float cubeVertices[] = {
+    float vertices[] = {
         // positions          // normals
         -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
          0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
@@ -134,66 +125,7 @@ int main()
         -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
     };
 
-    float cubeMapVertices[] = {
-        // positions          
-        -1.0f,  1.0f, -1.0f,
-        -1.0f, -1.0f, -1.0f,
-         1.0f, -1.0f, -1.0f,
-         1.0f, -1.0f, -1.0f,
-         1.0f,  1.0f, -1.0f,
-        -1.0f,  1.0f, -1.0f,
-
-        -1.0f, -1.0f,  1.0f,
-        -1.0f, -1.0f, -1.0f,
-        -1.0f,  1.0f, -1.0f,
-        -1.0f,  1.0f, -1.0f,
-        -1.0f,  1.0f,  1.0f,
-        -1.0f, -1.0f,  1.0f,
-
-         1.0f, -1.0f, -1.0f,
-         1.0f, -1.0f,  1.0f,
-         1.0f,  1.0f,  1.0f,
-         1.0f,  1.0f,  1.0f,
-         1.0f,  1.0f, -1.0f,
-         1.0f, -1.0f, -1.0f,
-
-        -1.0f, -1.0f,  1.0f,
-        -1.0f,  1.0f,  1.0f,
-         1.0f,  1.0f,  1.0f,
-         1.0f,  1.0f,  1.0f,
-         1.0f, -1.0f,  1.0f,
-        -1.0f, -1.0f,  1.0f,
-
-        -1.0f,  1.0f, -1.0f,
-         1.0f,  1.0f, -1.0f,
-         1.0f,  1.0f,  1.0f,
-         1.0f,  1.0f,  1.0f,
-        -1.0f,  1.0f,  1.0f,
-        -1.0f,  1.0f, -1.0f,
-
-        -1.0f, -1.0f, -1.0f,
-        -1.0f, -1.0f,  1.0f,
-         1.0f, -1.0f, -1.0f,
-         1.0f, -1.0f, -1.0f,
-        -1.0f, -1.0f,  1.0f,
-         1.0f, -1.0f,  1.0f
-    };
-
-    vector<glm::vec3> vegetation = {
-        glm::vec3(1.5f, -0.5f, -0.48f),
-        glm::vec3(2.5f, -0.5f, -0.51f),
-        glm::vec3(2.0f, -0.5f, 0.71f),
-    };
-
-    vector<std::string> faces = {
-        "/home/saiteja/Qualcomm/preparation/opengl/17-cubemaps/image/right.jpg",
-        "/home/saiteja/Qualcomm/preparation/opengl/17-cubemaps/image/left.jpg",
-        "/home/saiteja/Qualcomm/preparation/opengl/17-cubemaps/image/top.jpg",
-        "/home/saiteja/Qualcomm/preparation/opengl/17-cubemaps/image/bottom.jpg",
-        "/home/saiteja/Qualcomm/preparation/opengl/17-cubemaps/image/front.jpg",
-        "/home/saiteja/Qualcomm/preparation/opengl/17-cubemaps/image/back.jpg",
-    };
-    unsigned int cubeMapTexture = loadCubeMap(faces);
+    glEnable(GL_MULTISAMPLE);
 
     // cube VAO
     unsigned int cubeVAO, cubeVBO;
@@ -201,86 +133,45 @@ int main()
     glGenBuffers(1, &cubeVBO);
     glBindVertexArray(cubeVAO);
     glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), &cubeVertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), &vertices, GL_STATIC_DRAW);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
     glBindVertexArray(0);
 
-    unsigned int cubeMapVAO, cubeMapVBO;
-    glGenVertexArrays(1, &cubeMapVAO);
-    glGenBuffers(1, &cubeMapVBO);
-    glBindVertexArray(cubeMapVAO);
-    glBindBuffer(GL_ARRAY_BUFFER, cubeMapVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(cubeMapVertices), &cubeMapVertices, GL_STATIC_DRAW);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
-    glBindVertexArray(0);
-
-    stbi_set_flip_vertically_on_load(true);
-
-    // load textures
-    // -------------
-    unsigned int cubeTexture  = loadTexture("/home/saiteja/Qualcomm/preparation/opengl/17-cubemaps/image/container.jpg", false);
-
-    // shader configuration
-    // --------------------
     shader.use();
-    shader.setInt("texture1", 0);
-
-    cubeMapShader.use();
-    cubeMapShader.setInt("texture1", 0);
 
 
-    // render loop
-    // -----------
     while(!glfwWindowShouldClose(window))
     {
-        // per-frame time logic
-        // --------------------
-        float currentFrame = static_cast<float>(glfwGetTime());
-        deltaTime = currentFrame - lastFrame;
-        lastFrame = currentFrame;
 
         // input
         // -----
+        float currentFrame = static_cast<float>(glfwGetTime());
+        deltaTime = currentFrame - lastFrame;
+        lastFrame = currentFrame;
         processInput(window);
 
         // render
         // ------
-        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
         glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        shader.use();
         glm::mat4 model = glm::mat4(1.0f);
-        glm::mat4 view = camera.GetViewMatrix();
-        glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 
-        // cubes
-        glBindVertexArray(cubeVAO);
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_CUBE_MAP, cubeMapTexture);
-        glBindTexture(GL_TEXTURE_2D, cubeTexture);
+        glm::mat4 projection = glm::mat4(1.0f);
+        projection = glm::perspective(glm::radians(camera.Zoom), 800.0f/600.0f, 0.1f, 100.0f);
+
+        glm::mat4 view;
+        view = camera.GetViewMatrix();
+
         shader.setMat4("model", model);
         shader.setMat4("view", view);
         shader.setMat4("projection", projection);
-        shader.setVec3("cameraPos", camera.Position);
+
+        // cubes
+        glBindVertexArray(cubeVAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);   
-        glBindVertexArray(0);
-
-        cubeMapShader.use();
-        glDepthFunc(GL_LEQUAL);
-        view = glm::mat4(glm::mat3(camera.GetViewMatrix()));
-        cubeMapShader.setMat4("view", view);
-        cubeMapShader.setMat4("projection", projection); 
-
-        glBindVertexArray(cubeMapVAO);
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_CUBE_MAP, cubeMapTexture);
-        glDrawArrays(GL_TRIANGLES, 0, 36); 
-        glDepthFunc(GL_LESS);
         glBindVertexArray(0);
 
 
